@@ -1,2 +1,2 @@
-# Auto detect text files and perform LF normalization
-* text=auto
+# Normalize line endings to LF in the repository
+* text=auto eol=lf

@@ -1,0 +1,53 @@
+[package]
+name = "version-api"
+version = "1.0.0"
+edition = "2024"
+rust-version = "1.88"
+description = "HTTP API that reports the latest version of GitHub repositories and serves signed diff archives for auto-updaters"
+license = "MIT"
+readme = "README.md"
+publish = false
+
+[dependencies]
+anyhow = "1.0"
+axum = "0.8"
+base64 = "0.23"
+chrono = { version = "0.4", default-features = false, features = ["clock", "std"] }
+dotenvy = "0.15"
+ed25519-dalek = "3"
+futures-util = { version = "0.3", default-features = false, features = ["std"] }
+getrandom = "0.4"
+hex = "0.4"
+hmac = "0.13"
+hyper = { version = "1", features = ["server", "http1", "http2"] }
+hyper-util = { version = "0.1", features = ["server", "server-auto", "service", "tokio", "http1", "http2"] }
+moka = { version = "0.12", features = ["future"] }
+reqwest = { version = "0.13", default-features = false, features = ["http2", "rustls-no-provider"] }
+rustls = { version = "0.23", default-features = false, features = ["ring", "std", "tls12"] }
+serde = { version = "1.0", features = ["derive"] }
+serde_json = "1.0"
+sha1 = "0.11"
+sha2 = "0.11"
+tokio = { version = "1", features = ["fs", "io-util", "macros", "net", "rt-multi-thread", "signal", "sync", "time"] }
+tokio-util = { version = "0.7", features = ["io"] }
+tower = { version = "0.5", features = ["util"] }
+tower-http = { version = "0.7", features = ["cors"] }
+tower_governor = { version = "0.8", default-features = false, features = ["axum"] }
+tracing = "0.1"
+tracing-subscriber = { version = "0.3", features = ["env-filter"] }
+uuid = { version = "1", features = ["v4"] }
+webpki-root-certs = "1"
+zeroize = "1"
+zip = { version = "9", default-features = false, features = ["deflate-flate2-zlib-rs"] }
+
+[target.'cfg(unix)'.dependencies]
+libc = "0.2"
+
+[dev-dependencies]
+http-body-util = "0.1"
+tempfile = "3"
+
+[profile.release]
+codegen-units = 1
+lto = "thin"
+strip = "symbols"
