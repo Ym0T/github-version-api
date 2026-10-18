@@ -26,7 +26,8 @@ from me and really belongs to that update.
 
 Nothing in here is specific to the egg. If your project uses tags on GitHub,
 you can run your own instance for it with your own signing key. My instance
-only serves the egg, so your updater needs its own.
+only serves my own eggs (the [Rust web egg](https://github.com/Ym0T/pterodactyl-rust-web-egg)
+uses it too), so your updater needs its own.
 
 ## Table of Contents
 - [How it works](#how-it-works)
