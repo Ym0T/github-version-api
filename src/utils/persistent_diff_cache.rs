@@ -164,7 +164,7 @@ impl DiffCacheStore {
             .collect();
         let snapshot = Snapshot {
             schema: SCHEMA_VERSION,
-            saved_at: chrono::Utc::now().to_rfc3339(),
+            saved_at: super::formatting::current_timestamp(),
             entries,
         };
         let serialized = tokio::task::spawn_blocking(move || serde_json::to_vec(&snapshot)).await;
@@ -243,7 +243,7 @@ mod tests {
         let dir = tempfile::tempdir().unwrap();
         let path = dir.path().join("diff_cache.json");
         let store = DiffCacheStore::new(path.clone(), Some(key(1)));
-        let now = chrono::Utc::now().timestamp();
+        let now = jiff::Timestamp::now().as_second();
 
         let source = cache();
         source
@@ -277,7 +277,10 @@ mod tests {
         let path = dir.path().join("diff_cache.json");
         let source = cache();
         source
-            .insert("entry".into(), diff(chrono::Utc::now().timestamp(), None))
+            .insert(
+                "entry".into(),
+                diff(jiff::Timestamp::now().as_second(), None),
+            )
             .await;
         let store = DiffCacheStore::new(path.clone(), Some(key(1)));
         store.mark_dirty();
@@ -320,7 +323,7 @@ mod tests {
     async fn expired_entries_are_dropped_on_load() {
         let dir = tempfile::tempdir().unwrap();
         let path = dir.path().join("diff_cache.json");
-        let now = chrono::Utc::now().timestamp();
+        let now = jiff::Timestamp::now().as_second();
         let snapshot = Snapshot {
             schema: SCHEMA_VERSION,
             saved_at: String::new(),

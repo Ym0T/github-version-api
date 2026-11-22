@@ -63,7 +63,7 @@ pub async fn save(stats: &Stats, path: &Path) -> anyhow::Result<()> {
         total_requests: snapshot.total_requests,
         cache_hits: snapshot.cache_hits,
         cache_misses: snapshot.cache_misses,
-        last_saved: chrono::Utc::now().to_rfc3339(),
+        last_saved: super::formatting::current_timestamp(),
         version: env!("CARGO_PKG_VERSION").to_string(),
     };
     atomic_write(path, serde_json::to_vec_pretty(&data)?).await?;

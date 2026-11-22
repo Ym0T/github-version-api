@@ -84,7 +84,7 @@ struct DiffExpiry {
 
 impl DiffExpiry {
     fn remaining(&self, diff: &CachedDiff) -> Duration {
-        let now = chrono::Utc::now().timestamp();
+        let now = jiff::Timestamp::now().as_second();
         let diff_left = diff.remaining(self.ttl, now).unwrap_or(Duration::ZERO);
         let zip_left = diff
             .zip
@@ -199,7 +199,7 @@ mod tests {
     async fn diffs_expire_relative_to_creation_but_keep_reusable_archives() {
         let hour = Duration::from_secs(3600);
         let caches = Caches::new(Duration::from_secs(60), hour, 2 * hour);
-        let now = chrono::Utc::now().timestamp();
+        let now = jiff::Timestamp::now().as_second();
         caches
             .diffs
             .insert("fresh".into(), diff(now - 60, None))

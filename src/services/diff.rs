@@ -21,7 +21,7 @@ use crate::services::repository::ensure_public_repo;
 use crate::services::tags;
 use crate::services::version::latest_version;
 use crate::state::AppState;
-use crate::utils::formatting::{format_file_size, rfc3339};
+use crate::utils::formatting::{format_file_size, format_timestamp, rfc3339};
 
 /// The compare API lists at most 300 files and silently drops the rest.
 /// Treat a full page as incomplete instead of serving a partial update.
@@ -155,7 +155,7 @@ async fn fetch_diff(
             previous_filename: file.previous_filename,
         })
         .collect();
-    let now = chrono::Utc::now();
+    let now = jiff::Timestamp::now();
 
     Ok(CachedDiff {
         repository: target.repo.to_string(),
@@ -167,14 +167,14 @@ async fn fetch_diff(
         summary: DiffSummary::from_files(&files),
         total_changes: files.iter().map(|f| u64::from(f.changes)).sum(),
         files,
-        generated_at: now.to_rfc3339(),
-        created_at: now.timestamp(),
+        generated_at: format_timestamp(now),
+        created_at: now.as_second(),
         zip: None,
     })
 }
 
 fn build_response(diff: &CachedDiff, cached: bool, ttl: Duration) -> DiffResponse {
-    let now = chrono::Utc::now().timestamp();
+    let now = jiff::Timestamp::now().as_second();
     let remaining = diff.remaining(ttl, now).unwrap_or_default().as_secs();
     DiffResponse {
         from_version: diff.from_version.clone(),

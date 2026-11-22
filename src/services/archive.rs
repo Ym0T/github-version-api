@@ -284,8 +284,8 @@ async fn reuse(
     let Some(artifact) = &diff.zip else {
         return Ok(None);
     };
-    let age = chrono::Utc::now()
-        .timestamp()
+    let age = jiff::Timestamp::now()
+        .as_second()
         .saturating_sub(artifact.created_at);
     let fresh = u64::try_from(age).is_ok_and(|age| age < state.config.zip.reuse_window().as_secs());
     if !fresh || !is_valid_zip_filename(&artifact.filename) {
@@ -623,7 +623,7 @@ async fn build(
         filename,
         size: written.size,
         sha256: hex::encode(written.sha256),
-        created_at: chrono::Utc::now().timestamp(),
+        created_at: jiff::Timestamp::now().as_second(),
         signature: None,
         public_key: None,
         manifest: None,

@@ -379,7 +379,7 @@ fn check_status(response: Response) -> Result<Response, GitHubError> {
     {
         let retry_after = header_u64(headers.get(header::RETRY_AFTER)).or_else(|| {
             header_u64(headers.get("x-ratelimit-reset")).map(|reset| {
-                reset.saturating_sub(u64::try_from(chrono::Utc::now().timestamp()).unwrap_or(0))
+                reset.saturating_sub(u64::try_from(jiff::Timestamp::now().as_second()).unwrap_or(0))
             })
         });
         return Err(GitHubError::RateLimited {

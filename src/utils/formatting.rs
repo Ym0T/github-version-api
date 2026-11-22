@@ -1,7 +1,7 @@
 //! Formatting helpers.
 use std::time::Instant;
 
-use chrono::{DateTime, Utc};
+use jiff::Timestamp;
 
 pub fn format_file_size(bytes: u64) -> String {
     const UNITS: &[&str] = &["B", "KB", "MB", "GB", "TB"];
@@ -38,14 +38,22 @@ pub fn format_uptime(start: Instant) -> String {
 }
 
 pub fn current_timestamp() -> String {
-    Utc::now().to_rfc3339()
+    format_timestamp(Timestamp::now())
+}
+
+/// RFC 3339 representation in UTC with nanosecond precision.
+pub fn format_timestamp(timestamp: Timestamp) -> String {
+    timestamp
+        .strftime("%Y-%m-%dT%H:%M:%S%.9f+00:00")
+        .to_string()
 }
 
 /// RFC 3339 representation of a unix timestamp (clamped to a valid range).
 pub fn rfc3339(unix_seconds: i64) -> String {
-    DateTime::<Utc>::from_timestamp(unix_seconds, 0)
-        .unwrap_or(DateTime::<Utc>::MAX_UTC)
-        .to_rfc3339()
+    Timestamp::from_second(unix_seconds)
+        .unwrap_or(Timestamp::MAX)
+        .strftime("%Y-%m-%dT%H:%M:%S+00:00")
+        .to_string()
 }
 
 #[cfg(test)]
@@ -64,6 +72,11 @@ mod tests {
     #[test]
     fn timestamps() {
         assert_eq!(rfc3339(0), "1970-01-01T00:00:00+00:00");
-        assert_eq!(rfc3339(i64::MAX), DateTime::<Utc>::MAX_UTC.to_rfc3339());
+        assert_eq!(rfc3339(1_700_000_000), "2023-11-14T22:13:20+00:00");
+        assert_eq!(rfc3339(i64::MAX), "9999-12-30T22:00:00+00:00");
+        assert_eq!(
+            format_timestamp(Timestamp::new(1_700_000_000, 120_000_000).unwrap()),
+            "2023-11-14T22:13:20.120000000+00:00"
+        );
     }
 }
