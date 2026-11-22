@@ -1,6 +1,6 @@
 [package]
 name = "version-api"
-version = "1.0.0"
+version = "1.0.1"
 edition = "2024"
 rust-version = "1.88"
 description = "HTTP API that reports the latest version of GitHub repositories and serves signed diff archives for auto-updaters"
