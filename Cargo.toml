@@ -12,7 +12,7 @@ publish = false
 anyhow = "1.0"
 axum = "0.8"
 base64 = "0.23"
-jiff = { version = "0.2", default-features = false, features = ["std"] }
+jiff = { version = "1.0", default-features = false, features = ["std"] }
 dotenvy = "0.15"
 ed25519-dalek = "3"
 futures-util = { version = "0.3", default-features = false, features = ["std"] }
